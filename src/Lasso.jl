@@ -178,7 +178,7 @@ type LassoPath{S<:@compat(Union{LinearModel,GeneralizedLinearModel}),T} <: Regre
 end
 
 function Base.show(io::IO, path::LassoPath)
-    prefix = isa(path.m, GeneralizedLinearModel) ? string(typeof(path.m.rr.d).name.name, " ") : "" 
+    prefix = isa(path.m, GeneralizedLinearModel) ? string(typeof(path.m.rr.d).name.name, " ") : ""
     println(io, prefix*"Lasso Solution Path ($(size(path.coefs, 2)) solutions for $(size(path.coefs, 1)) predictors in $(path.niter) iterations):")
 
     coefs = path.coefs

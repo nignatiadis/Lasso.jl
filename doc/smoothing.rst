@@ -25,6 +25,13 @@ Fused Lasso and trend filtering
     order k+1. The model coefficients can be obtained by calling
     ``coef`` on the returned model object.
 
+.. function:: fit(IsotonicTrendFilter, y, order, λ)
+
+    Fits the same trend filter model as above subject to the additional constraint:
+
+    .. math:: \beta_1 \leq \beta_2 \leq \dotsc \leq \beta_N
+
+
     For details of the algorithm, see Ramdas, A., & Tibshirani, R. J.
     (2014). Fast and flexible ADMM algorithms for trend filtering.
     arXiv Preprint arXiv:1406.2082. Retrieved from

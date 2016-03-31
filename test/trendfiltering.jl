@@ -1,4 +1,4 @@
-using Lasso, FactCheck
+using Lasso, FactCheck, Isotonic
 DATADIR = joinpath(dirname(@__FILE__), "data")
 
 function diffmatslow(order, n)
@@ -38,4 +38,30 @@ facts("TrendFiltering") do
     end
 end
 
+# test with noiseless artificial data, so that monotonicity is artificially imposed and isotonic
+# trendfilter returns same output as standard trendfilter
+facts("IsotonicTrendFiltering and TrendFiltering") do
+  y = Float64[sqrt(x) for x in 0:100]
+  for order in (1, 2)
+    context("order = $(order)") do
+        for lambda in (.1, 1.)
+            context("lambda = $(lambda)") do
+              tf = coef(fit(TrendFilter, y, order,lambda ;tol=1e-9))
+              isotf = coef(fit(IsotonicTrendFilter, y, order,lambda ;tol=1e-9))
+              @fact tf => roughly(isotf)
+              end
+          end
+      end
+  end
+end
 
+# now compare standard isotonic regression to isotonic regression
+# for λ low these should be quite close
+facts("IsotonicTrendFiltering and Isotonic Regression") do
+  y = Float64[sqrt(x) for x in 1:100] +  repeat([-.1,.1], outer=[50])
+  y_iso = isotonic_regression(y)
+  y_tf_1 = coef(fit(IsotonicTrendFilter, y , 1, 1e3; tol=1e-9))
+  y_tf_2 = coef(fit(IsotonicTrendFilter, y , 1, 1e-3; tol=1e-9))
+  @fact y_iso => roughly(y_tf_2; atol=1e-2)
+  @fact y_iso => not(roughly(y_tf_1; atol=1e-2))
+end
