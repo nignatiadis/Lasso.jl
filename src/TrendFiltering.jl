@@ -1,9 +1,12 @@
 module TrendFiltering
 using StatsBase, Isotonic, ..FusedLassoMod, ..Util
-import Base: +, -, *, length
-export TrendFilter, IsotonicTrendFilter, DifferenceMatrix
-export EquidistantGrid
+import Base: +, -, *, \, length, size, linearindexing
+export TrendFilter, IsotonicTrendFilter, DifferenceMatrix,
+       FallingFactorialMatrix,
+       FallingFactorialModel
+export EquidistantGrid, Design
 
+include("FallingFactorial.jl")
 include("TrendFilteringMatrices.jl")
 # Implements the algorithm from Ramdas, A., & Tibshirani, R. J. (2014).
 # Fast and flexible ADMM algorithms for trend filtering. arXiv

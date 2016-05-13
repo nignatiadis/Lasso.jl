@@ -1,11 +1,3 @@
-immutable EquidistantGrid
-    n::Int
-end
-
-Base.length(x::EquidistantGrid) = x.n
-
-typealias Design{T} Union{EquidistantGrid, Vector{T}}
-
 immutable DifferenceMatrix{T, D<:Design} <: AbstractMatrix{T}
     k::Int
     x::D
@@ -18,6 +10,7 @@ immutable DifferenceMatrix{T, D<:Design} <: AbstractMatrix{T}
         new(k, x, b, si)
     end
 end
+
 
 function call{T}(::Type{DifferenceMatrix{T}}, k::Int, x::Design{T})
   n = length(x)
@@ -39,6 +32,8 @@ function Base.size(K::DifferenceMatrix)
    (n-K.k-1, n)
 end
 
+defaultρ(mat::DifferenceMatrix) = defaultρ(mat.x)
+
 # Multiply by difference matrix by filtering
 function Base.LinAlg.A_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::AbstractVector, α::Real=1)
     length(x) == size(K, 2) || throw(DimensionMismatch())
@@ -59,6 +54,7 @@ function Base.LinAlg.A_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::Abstr
     end
     out
 end
+
 *(K::DifferenceMatrix, x::AbstractVector) = A_mul_B!(similar(x, size(K, 1)), K, x)
 
 function Base.LinAlg.At_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::AbstractVector, α::Real=1)

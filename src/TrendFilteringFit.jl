@@ -72,21 +72,21 @@ end
 StatsBase.coef(tf::TrendFilter) = tf.β
 
 
-# Also implement IsotonicTrendFilter
+  # Also implement IsotonicTrendFilter
 
-type IsotonicTrendFilter{T,S} <: GeneralizedTrendFiltering
-    Dkp1::DifferenceMatrix{T}                # D(k+1)
-    Dk::DifferenceMatrix{T}                  # D(k)
-    DktDk::SparseMatrixCSC{T,Int}            # Dk'Dk
-    β::Vector{T}                             # Output coefficients and temporary storage for ρD(k+1)'α + u
-    γ::Vector{T}                             # ADMM primal γ
-    u::Vector{T}                             # ADMM dual u
-    v::Vector{T}                             # ADMM dual v
-    Dkβ::Vector{T}                           # Temporary storage for D(k)*β
-    Dkp1β::Vector{T}                         # Temporary storage for D(k+1)*β (aliases Dkβ)
-    flsa::FusedLasso{T,S}                    # Fused lasso model
-    niter::Int                               # Number of ADMM iterations
-end
+  type IsotonicTrendFilter{T,S} <: GeneralizedTrendFiltering
+      Dkp1::DifferenceMatrix{T}                # D(k+1)
+      Dk::DifferenceMatrix{T}                  # D(k)
+      DktDk::SparseMatrixCSC{T,Int}            # Dk'Dk
+      β::Vector{T}                             # Output coefficients and temporary storage for ρD(k+1)'α + u
+      γ::Vector{T}                             # ADMM primal γ
+      u::Vector{T}                             # ADMM dual u
+      v::Vector{T}                             # ADMM dual v
+      Dkβ::Vector{T}                           # Temporary storage for D(k)*β
+      Dkp1β::Vector{T}                         # Temporary storage for D(k+1)*β (aliases Dkβ)
+      flsa::FusedLasso{T,S}                    # Fused lasso model
+      niter::Int                               # Number of ADMM iterations
+  end
 
 function StatsBase.fit{T}(::Type{IsotonicTrendFilter}, y::AbstractVector{T}, order, λ; dofit::Bool=true, args...)
     order >= 1 || throw(ArgumentError("order must be >= 1"))
