@@ -1,5 +1,5 @@
 
-abstract GeneralizedTrendFiltering
+abstract GeneralizedTrendFiltering <: StatisticalModel
 type TrendFilter{T,S} <: GeneralizedTrendFiltering
     Dkp1::DifferenceMatrix{T}                # D(k+1)
     Dk::DifferenceMatrix{T}                  # D(k)
@@ -11,6 +11,11 @@ type TrendFilter{T,S} <: GeneralizedTrendFiltering
     flsa::FusedLasso{T,S}                    # Fused lasso model
     niter::Int                               # Number of ADMM iterations
 end
+
+StatsBase.coef(tf::TrendFilter) = tf.β
+StatsBase.predict(tf::TrendFilter) = coef(tf)
+
+
 
 function StatsBase.fit{T}(::Type{TrendFilter}, y::AbstractVector{T}, order, λ; dofit::Bool=true, args...)
     order >= 1 || throw(ArgumentError("order must be >= 1"))

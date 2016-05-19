@@ -55,6 +55,18 @@ function Base.LinAlg.A_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::Abstr
     out
 end
 
+# macro..
+function Base.LinAlg.A_mul_B!(out::AbstractMatrix, K::DifferenceMatrix, X::AbstractMatrix, α::Real=1)
+  # todo dimension checks
+    nout = size(out, 1)
+    nX   = size(X, 1)
+    @inbounds for i=1:size(out,2)
+        A_mul_B!(pointer_to_array(pointer(out,(i-1)*nout+1), nout), K, pointer_to_array(pointer(X,(i-1)*nX+1), nX), α)
+    end
+    out
+end
+
+
 *(K::DifferenceMatrix, x::AbstractVector) = A_mul_B!(similar(x, size(K, 1)), K, x)
 
 function Base.LinAlg.At_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::AbstractVector, α::Real=1)
@@ -79,6 +91,18 @@ function Base.LinAlg.At_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::Abst
     end
     out
 end
+
+# TODO: do this using macro
+function Base.LinAlg.At_mul_B!(out::AbstractMatrix, K::DifferenceMatrix, X::AbstractMatrix, α::Real=1)
+  # todo dimension checks
+  nout = size(out, 1)
+  nX   = size(X, 1)
+  @inbounds for i=1:size(out,2)
+    At_mul_B!(pointer_to_array(pointer(out,(i-1)*nout+1), nout), K, pointer_to_array(pointer(X,(i-1)*nX+1), nX), α)
+  end
+  out
+end
+
 Base.LinAlg.Ac_mul_B!(out::AbstractVector, K::DifferenceMatrix, x::AbstractVector, α::Real=1) = At_mul_B!(out, K, x)
 Base.LinAlg.At_mul_B(K::DifferenceMatrix, x::AbstractVector) = At_mul_B!(similar(x, size(K, 2)), K, x)
 Base.LinAlg.Ac_mul_B(K::DifferenceMatrix, x::AbstractVector) = At_mul_B!(similar(x, size(K, 2)), K, x)

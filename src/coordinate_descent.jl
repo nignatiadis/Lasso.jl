@@ -680,8 +680,8 @@ function StatsBase.fit!{S<:GeneralizedLinearModel,T}(path::LassoPath{S,T}; verbo
                 oldb0 = b0
 
                 # Compute working response
-                wrkresp!(scratchmu, eta, wrkresid, offset)
-                wrkwt = wrkwt!(r)
+                wrkresp!(scratchmu, eta, wrkresid, offset) # eta = Xβ , wrkresid?, offset=0
+                wrkwt = wrkwt!(r) #get working weights
 
                 # Run coordinate descent inner loop
                 niter += cdfit!(newcoef, update!(cd, newcoef, scratchmu, wrkwt), curλ, criterion)
